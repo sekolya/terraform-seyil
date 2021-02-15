@@ -1,26 +1,46 @@
-resource "aws_iam_group" "Developer" {
-    name = "Developer"
-}
-resource "aws_iam_group" "Management" {
-    name = "Management"
+resource "aws_iam_group" "Infosec" {
+    name = "Infosec"
 }
 
-resource "aws_iam_group_membership" "Developers_team" {
-    name = "Developer-group-membership"
-    users = [
-        "${aws_iam_user.Bob.name}",
-        "${aws_iam_user.Tim.name}",
-        "${aws_iam_user.Ben.name}"
-    ]
-    group = aws_iam_group.Developer.name
-}
 
-resource "aws_iam_group_membership" "Management_team" {
-    name = "Management-group-membership"
+resource "aws_iam_group_membership" "Infosec_team" {
+    name = "Infosec-group-membership"
     users = [
-    
-        "${aws_iam_user.Ben.name}"
+        "${aws_iam_user.Ron.name}",
+        "${aws_iam_user.Sam.name}",
+        "${aws_iam_user.Billy.name}"
     ]
-    group = aws_iam_group.Management.name
+    group = aws_iam_group.Infosec.name
+}
+resource "aws_iam_group_policy" "my_Infosec_policy" {
+  name  = "my_Infosec_policy"
+  group = aws_iam_group.Infosec.name
+
+
+  policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "NotAction": [
+                "iam:*",
+                "organizations:*",
+                "account:*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:CreateServiceLinkedRole",
+                "iam:DeleteServiceLinkedRole",
+                "iam:ListRoles",
+                "organizations:DescribeOrganization",
+                "account:ListRegions"
+            ],
+            "Resource": "*"
+        }
+    ]
+})
 }
 
